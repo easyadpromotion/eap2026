@@ -53,8 +53,15 @@
         .upload-box {
             border: 2px dashed #b2dfdb; padding: 25px; text-align: center; 
             border-radius: 10px; margin-bottom: 20px; background: #e0f2f1; cursor: pointer;
+            overflow: hidden; position: relative;
         }
         .upload-icon { font-size: 30px; display: block; margin-bottom: 5px; }
+        
+        /* IMAGE PREVIEW STYLING */
+        #imgPreview {
+            width: 100%; height: 150px; object-fit: cover; 
+            display: none; border-radius: 8px; margin-bottom: 10px;
+        }
 
         /* COST BOX */
         .cost-box { 
@@ -84,7 +91,7 @@
 <div class="mobile-screen">
 
     <div class="header">
-        <a href="select_ad_type.html" class="back-btn">&larr;</a>
+        <a href="vendor_dashboard.html" class="back-btn">&larr;</a>
         <div class="page-title">Post Frame Ad</div>
     </div>
 
@@ -92,47 +99,34 @@
         
         <div class="form-card">
             <label>Ad Image (Banner)</label>
-            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+            <img id="imgPreview" alt="Ad Preview">
+            
+            <div class="upload-box" onclick="document.getElementById('adImage').click()">
                 <span class="upload-icon">📷</span>
                 <span style="color:#00796b; font-size:12px; font-weight:600;">Click to Upload Image</span>
-                <input type="file" id="fileInput" style="display: none;">
+                <input type="file" id="adImage" style="display: none;" onchange="previewImage()">
             </div>
 
             <label>Campaign Name</label>
             <input type="text" id="campName" placeholder="e.g., Diwali Sale Offer">
 
             <label>Ad Description</label>
-            <textarea id="campDesc" rows="3" placeholder="Describe your offer..."></textarea>
+            <textarea id="adDesc" rows="3" placeholder="Describe your offer..."></textarea>
 
             <label>Target Category</label>
             <select id="campCat">
                 <option>Select Category</option>
                 <option>Banking & Financial Services</option>
-        <option>Information Technology (IT & ITES)</option>
-        <option>FMCG</option>
-        <option>Pharmaceuticals & Healthcare</option>
-        <option>Automobile</option>
-        <option>Oil&Gas / Energy</option>
-        <option>Retail & E-Commerce</option> 
-        <option>Metals & Mining</option>
-        <option>Power & Utilities</option>
-        <option>Infrastructure</option>
-        <option>Chemicals & Fertilizers</option>
-        <option>Capital Goods & Engineering</option>
-        <option>Textiles & Apparel</option>
-        <option>Consumer Durables</option>
-        <option>Retail & E-Commerce</option>
-        <option>Logistics & Transportation</option>
-        <option>Agriculture & Allied</option>
-        <option>Family & Relatives </option>
-        <option>Food & Dining</option>
-        <option>Education</option>
-        <option>Real Estate & Construction</option>
-        <option>Media & Entertainment</option>
-        <option>Fashion & Lifestyle</option>
-        <option>Political</option>
-        <option>Cinema / Celebrities</option>
-        <option>Other</option>
+                <option>Information Technology</option>
+                <option>FMCG</option>
+                <option>Pharmaceuticals & Healthcare</option>
+                <option>Automobile</option>
+                <option>Retail & E-Commerce</option>
+                <option>Real Estate & Construction</option>
+                <option>Media & Entertainment</option>
+                <option>Fashion & Lifestyle</option>
+                <option>Education</option>
+                <option>Other</option>
             </select>
 
             <label>Target Location / Pincode</label>
@@ -166,61 +160,121 @@
             </div>
         </div>
 
-        <button class="btn-submit" onclick="publishFrameAd()">PAY & PUBLISH AD</button>
+        <button class="btn-submit" onclick="publishAd()">PAY & PUBLISH AD</button>
 
     </div>
 
 </div>
 
 <script>
+    // --- 1. PREVIEW IMAGE ---
+    function previewImage() {
+        const fileInput = document.getElementById("adImage");
+        const file = fileInput.files[0];
+        
+        if (file) {
+            // CHECK SIZE: Limit to 2MB (2,000,000 bytes)
+            if (file.size > 2000000) {
+                alert("⚠️ File is too big! Please choose an image under 2MB.");
+                fileInput.value = ""; // Clear input
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Show Preview
+                document.getElementById("imgPreview").src = e.target.result;
+                document.getElementById("imgPreview").style.display = "block";
+                
+                // Hide Text and Icon inside Upload Box
+                document.querySelector(".upload-box .upload-icon").style.display = "none";
+                document.querySelector(".upload-box span[style]").style.display = "none"; // Hides the text span
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // --- 2. CALCULATE COST ---
     function calculateCost() {
-        // 1. Get Values
         var views = parseInt(document.getElementById('views').value) || 0;
         var costPerView = 1.00;
 
-        // 2. Calculate
         var subtotal = views * costPerView;
         var gst = subtotal * 0.18;
         var total = subtotal + gst;
 
-        // 3. Update UI
         document.getElementById('subtotalDisplay').innerText = "₹ " + subtotal.toFixed(2);
         document.getElementById('gstDisplay').innerText = "₹ " + gst.toFixed(2);
         document.getElementById('totalDisplay').innerText = "₹ " + total.toFixed(2);
     }
 
-    // --- KEY FUNCTION TO SAVE DATA ---
-    function publishFrameAd() {
-        const name = document.getElementById('campName').value;
-        const category = document.getElementById('campCat').value;
-        const totalCost = document.getElementById('totalDisplay').innerText;
-        const views = document.getElementById('views').value;
+    // --- 3. PUBLISH AD (With Error Handling) ---
+    function publishAd() {
+        try {
+            // A. Get Input Values
+            const name = document.getElementById('campName').value;
+            const category = document.getElementById('campCat').value;
+            const desc = document.getElementById('adDesc').value;
+            const views = document.getElementById('views').value;
+            const totalCost = document.getElementById('totalDisplay').innerText;
+            const fileInput = document.getElementById("adImage");
 
-        if(!name) { alert("Please enter Campaign Name"); return; }
+            // B. Validations
+            if(!name) { alert("Please enter Campaign Name"); return; }
+            if(!desc) { alert("Please enter Ad Description"); return; }
+            if(category === "Select Category") { alert("Please select a valid Category"); return; }
+            if(fileInput.files.length === 0) { alert("Please select an ad image!"); return; }
 
-        // 1. Create the Ad Object
-        const newAd = {
-            id: "FRA" + Math.floor(Math.random() * 9999),
-            type: "Frame", // Important identifier
-            name: name,
-            category: category,
-            stats: { views: 0, clicks: 0, spent: 0 },
-            budget: totalCost,
-            target: views,
-            status: "Pending", // This makes it show in Admin Pending
-            date: new Date().toLocaleDateString()
-        };
+            // C. Process Image & Save
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const base64Image = e.target.result;
 
-        // 2. Save to Browser Memory (LocalStorage)
-        let ads = JSON.parse(localStorage.getItem("vendorCampaigns")) || [];
-        ads.push(newAd);
-        localStorage.setItem("vendorCampaigns", JSON.stringify(ads));
+                    const newAd = {
+                        id: "FRA" + Math.floor(Math.random() * 9999),
+                        type: "Frame",
+                        title: name,
+                        desc: desc,
+                        category: category,
+                        image: base64Image,
+                        budget: totalCost,
+                        target: views,
+                        status: "Pending",
+                        date: new Date().toLocaleDateString()
+                    };
 
-        // 3. Success & Redirect
-        alert("Ad Submitted! Sent to Admin for Approval.");
-        window.location.href = "manage_campaigns.html";
+                    // D. Save to User Page Queue
+                    let allAds = JSON.parse(localStorage.getItem("all_frame_ads") || "[]");
+                    allAds.push(newAd);
+                    localStorage.setItem("all_frame_ads", JSON.stringify(allAds));
+
+                    // E. Save to Vendor Dashboard
+                    let vendorAds = JSON.parse(localStorage.getItem("vendorCampaigns") || "[]");
+                    vendorAds.push(newAd);
+                    localStorage.setItem("vendorCampaigns", JSON.stringify(vendorAds));
+
+                    alert("✅ Ad Submitted Successfully!");
+                    window.location.href = "vendor_dashboard.html";
+
+                } catch (err) {
+                    // CATCH STORAGE FULL ERROR
+                    if (err.name === 'QuotaExceededError') {
+                        alert("❌ Error: Image is too large to save! Please use a smaller image or screenshot.");
+                    } else {
+                        alert("❌ Error saving ad: " + err.message);
+                    }
+                    console.error(err);
+                }
+            };
+            
+            reader.readAsDataURL(fileInput.files[0]);
+
+        } catch (e) {
+            alert("❌ System Error: " + e.message);
+        }
     }
 </script>
-
 </body>
 </html>
