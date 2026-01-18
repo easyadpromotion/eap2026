@@ -1,291 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Frame Ad</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* 1. APP FRAME STYLES */
-        body { 
-            font-family: 'Poppins', sans-serif; background: #e0f2f1; 
-            margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; 
-        }
-        
-        .mobile-screen { 
-            width: 100%; max-width: 380px; min-height: 100vh;
-            background: #f8f9fa; border: 8px solid #fff; border-radius: 40px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 0 0 2px #b2dfdb;
-            display: flex; flex-direction: column;
-            box-sizing: border-box; position: relative; overflow: hidden;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Frame Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 1. APP FRAME STYLES */
+        body { 
+            font-family: 'Poppins', sans-serif; background: #e0f2f1; 
+            margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; 
+        }
+        
+        .mobile-screen { 
+            width: 100%; max-width: 380px; min-height: 100vh;
+            background: #f8f9fa; border: 8px solid #fff; border-radius: 40px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 0 0 2px #b2dfdb;
+            display: flex; flex-direction: column;
+            box-sizing: border-box; position: relative; overflow: hidden;
+        }
 
-        /* HEADER */
-        .header {
-            background: #009688; padding: 25px 20px 20px 20px; color: white;
-            display: flex; align-items: center; border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 10px rgba(0,150,136,0.2); z-index: 10;
-        }
-        .back-btn { text-decoration: none; color: white; font-size: 24px; margin-right: 15px; font-weight: bold; }
-        .page-title { font-size: 18px; font-weight: 700; }
+        /* HEADER */
+        .header {
+            background: #009688; padding: 25px 20px 20px 20px; color: white;
+            display: flex; align-items: center; border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 10px rgba(0,150,136,0.2); z-index: 10;
+        }
+        .back-btn { text-decoration: none; color: white; font-size: 24px; margin-right: 15px; font-weight: bold; }
+        .page-title { font-size: 18px; font-weight: 700; }
 
-        /* SCROLLABLE FORM AREA */
-        .container { 
-            padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 50px; 
-        }
-        .container::-webkit-scrollbar { display: none; }
+        /* SCROLLABLE FORM AREA */
+        .container { 
+            padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 50px; 
+        }
+        .container::-webkit-scrollbar { display: none; }
 
-        /* FORM CARD */
-        .form-card { 
-            background: white; padding: 20px; border-radius: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 20px; 
-        }
+        /* FORM CARD */
+        .form-card { 
+            background: white; padding: 20px; border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 20px; 
+        }
 
-        label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; font-size: 13px; }
-        input, select, textarea { 
-            width: 100%; padding: 12px; margin-bottom: 15px; 
-            border: 2px solid #eee; border-radius: 10px; font-size: 13px; 
-            box-sizing: border-box; font-family: 'Poppins', sans-serif;
-        }
-        input:focus, select:focus, textarea:focus { border-color: #009688; outline: none; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; font-size: 13px; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; margin-bottom: 15px; 
+            border: 2px solid #eee; border-radius: 10px; font-size: 13px; 
+            box-sizing: border-box; font-family: 'Poppins', sans-serif;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #009688; outline: none; }
 
-        /* UPLOAD BOX */
-        .upload-box {
-            border: 2px dashed #b2dfdb; padding: 25px; text-align: center; 
-            border-radius: 10px; margin-bottom: 20px; background: #e0f2f1; cursor: pointer;
-            overflow: hidden; position: relative;
-        }
-        .upload-icon { font-size: 30px; display: block; margin-bottom: 5px; }
-        
-        /* IMAGE PREVIEW STYLING */
-        #imgPreview {
-            width: 100%; height: 150px; object-fit: cover; 
-            display: none; border-radius: 8px; margin-bottom: 10px;
-        }
+        /* UPLOAD BOX */
+        .upload-box {
+            border: 2px dashed #b2dfdb; padding: 25px; text-align: center; 
+            border-radius: 10px; margin-bottom: 20px; background: #e0f2f1; cursor: pointer;
+            overflow: hidden; position: relative;
+        }
+        .upload-icon { font-size: 30px; display: block; margin-bottom: 5px; }
+        
+        /* IMAGE PREVIEW STYLING */
+        #imgPreview {
+            width: 100%; height: 150px; object-fit: cover; 
+            display: none; border-radius: 8px; margin-bottom: 10px;
+        }
 
-        /* COST BOX */
-        .cost-box { 
-            background: #e3f2fd; padding: 15px; border-radius: 10px; 
-            border: 1px dashed #2196f3; margin-top: 10px; 
-        }
-        .cost-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #555; }
-        .cost-total { 
-            border-top: 1px solid #bbdefb; padding-top: 10px; margin-top: 10px; 
-            font-weight: 700; color: #1976d2; font-size: 16px; 
-            display: flex; justify-content: space-between; 
-        }
+        /* COST BOX */
+        .cost-box { 
+            background: #e3f2fd; padding: 15px; border-radius: 10px; 
+            border: 1px dashed #2196f3; margin-top: 10px; 
+        }
+        .cost-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #555; }
+        .cost-total { 
+            border-top: 1px solid #bbdefb; padding-top: 10px; margin-top: 10px; 
+            font-weight: 700; color: #1976d2; font-size: 16px; 
+            display: flex; justify-content: space-between; 
+        }
 
-        /* BUTTON */
-        .btn-submit {
-            background-color: #009688; color: white; width: 100%; padding: 15px; 
-            border: none; border-radius: 12px; font-size: 15px; font-weight: 700; 
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,150,136,0.3);
-            transition: 0.2s;
-        }
-        .btn-submit:active { transform: scale(0.98); }
+        /* BUTTON */
+        .btn-submit {
+            background-color: #009688; color: white; width: 100%; padding: 15px; 
+            border: none; border-radius: 12px; font-size: 15px; font-weight: 700; 
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,150,136,0.3);
+            transition: 0.2s;
+        }
+        .btn-submit:active { transform: scale(0.98); }
 
-    </style>
+    </style>
 </head>
 <body>
 
 <div class="mobile-screen">
 
-    <div class="header">
-        <a href="vendor_dashboard.html" class="back-btn">&larr;</a>
-        <div class="page-title">Post Frame Ad</div>
-    </div>
+    <div class="header">
+        <a href="vendor_dashboard.html" class="back-btn">&larr;</a>
+        <div class="page-title">Post Frame Ad</div>
+    </div>
 
-    <div class="container">
-        
-        <div class="form-card">
-            <label>Ad Image (Banner)</label>
-            <img id="imgPreview" alt="Ad Preview">
-            
-            <div class="upload-box" onclick="document.getElementById('adImage').click()">
-                <span class="upload-icon">📷</span>
-                <span style="color:#00796b; font-size:12px; font-weight:600;">Click to Upload Image</span>
-                <input type="file" id="adImage" style="display: none;" onchange="previewImage()">
-            </div>
+    <div class="container">
+        
+        <div class="form-card">
+            <label>Ad Image (Banner)</label>
+            <img id="imgPreview" alt="Ad Preview">
+            
+            <div class="upload-box" onclick="document.getElementById('adImage').click()">
+                <span class="upload-icon">📷</span>
+                <span style="color:#00796b; font-size:12px; font-weight:600;">Click to Upload Image</span>
+                <input type="file" id="adImage" style="display: none;" onchange="previewImage()">
+            </div>
 
-            <label>Campaign Name</label>
-            <input type="text" id="campName" placeholder="e.g., Diwali Sale Offer">
+            <label>Campaign Name</label>
+            <input type="text" id="campName" placeholder="e.g., Diwali Sale Offer">
 
-            <label>Ad Description</label>
-            <textarea id="adDesc" rows="3" placeholder="Describe your offer..."></textarea>
+            <label>Ad Description</label>
+            <textarea id="adDesc" rows="3" placeholder="Describe your offer..."></textarea>
 
-            <label>Target Category</label>
-            <select id="campCat">
-                <option>Select Category</option>
-                <option>Banking & Financial Services</option>
-                <option>Information Technology</option>
-                <option>FMCG</option>
-                <option>Pharmaceuticals & Healthcare</option>
-                <option>Automobile</option>
-                <option>Retail & E-Commerce</option>
-                <option>Real Estate & Construction</option>
-                <option>Media & Entertainment</option>
-                <option>Fashion & Lifestyle</option>
-                <option>Education</option>
-                <option>Other</option>
-            </select>
+            <label>Target Category</label>
+            <select id="campCat">
+                <option>Select Category</option>
+                <option>Banking & Financial Services</option>
+                <option>Information Technology</option>
+                <option>FMCG</option>
+                <option>Pharmaceuticals & Healthcare</option>
+                <option>Automobile</option>
+                <option>Retail & E-Commerce</option>
+                <option>Real Estate & Construction</option>
+                <option>Media & Entertainment</option>
+                <option>Fashion & Lifestyle</option>
+                <option>Education</option>
+                <option>Other</option>
+            </select>
 
-            <label>Target Location / Pincode</label>
-            <input type="text" placeholder="e.g., Visakhapatnam, 530016">
-        </div>
+            <label>Target Location / Pincode</label>
+            <input type="text" placeholder="e.g., Visakhapatnam, 530016">
+        </div>
 
-        <div class="form-card">
-            <h3 style="margin-top: 0; font-size: 15px; color:#333;">Budget & Costing</h3>
+        <div class="form-card">
+            <h3 style="margin-top: 0; font-size: 15px; color:#333;">Budget & Costing</h3>
 
-            <label>Target Views (Min 100)</label>
-            <input type="number" id="views" value="200" min="100" oninput="calculateCost()">
-            <p style="font-size: 11px; color: #888; margin-top: -10px; margin-bottom: 15px;">Rate: ₹1.00 per view</p>
+            <label>Target Views (Min 100)</label>
+            <input type="number" id="views" value="200" min="100" oninput="calculateCost()">
+            <p style="font-size: 11px; color: #888; margin-top: -10px; margin-bottom: 15px;">Rate: ₹1.00 per view</p>
 
-            <div class="cost-box">
-                <div class="cost-row">
-                    <span>Rate Per View</span>
-                    <span>₹ 1.00</span>
-                </div>
-                <div class="cost-row">
-                    <span>Subtotal</span>
-                    <span id="subtotalDisplay">₹ 200.00</span>
-                </div>
-                <div class="cost-row">
-                    <span>GST (18%)</span>
-                    <span id="gstDisplay">₹ 36.00</span>
-                </div>
-                <div class="cost-total">
-                    <span>Total Payable</span>
-                    <span id="totalDisplay">₹ 236.00</span>
-                </div>
-            </div>
-        </div>
+            <div class="cost-box">
+                <div class="cost-row">
+                    <span>Rate Per View</span>
+                    <span>₹ 1.00</span>
+                </div>
+                <div class="cost-row">
+                    <span>Subtotal</span>
+                    <span id="subtotalDisplay">₹ 200.00</span>
+                </div>
+                <div class="cost-row">
+                    <span>GST (18%)</span>
+                    <span id="gstDisplay">₹ 36.00</span>
+                </div>
+                <div class="cost-total">
+                    <span>Total Payable</span>
+                    <span id="totalDisplay">₹ 236.00</span>
+                </div>
+            </div>
+        </div>
 
-        <button class="btn-submit" onclick="publishAd()">PAY & PUBLISH AD</button>
+        <button class="btn-submit" onclick="publishAd()">PAY & PUBLISH AD</button>
 
-    </div>
+    </div>
 
 </div>
 
 <script>
-    // --- 1. PREVIEW IMAGE ---
-    function previewImage() {
-        const fileInput = document.getElementById("adImage");
-        const file = fileInput.files[0];
-        
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById("imgPreview").src = e.target.result;
-                document.getElementById("imgPreview").style.display = "block";
-                document.querySelector(".upload-box .upload-icon").style.display = "none";
-                document.querySelector(".upload-box span[style]").style.display = "none"; 
-            }
-            reader.readAsDataURL(file);
-        }
-    }
+    // --- 1. PREVIEW IMAGE ---
+    function previewImage() {
+        const fileInput = document.getElementById("adImage");
+        const file = fileInput.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("imgPreview").src = e.target.result;
+                document.getElementById("imgPreview").style.display = "block";
+                document.querySelector(".upload-box .upload-icon").style.display = "none";
+                document.querySelector(".upload-box span[style]").style.display = "none"; 
+            }
+            reader.readAsDataURL(file);
+        }
+    }
 
-    // --- 2. CALCULATE COST ---
-    function calculateCost() {
-        var views = parseInt(document.getElementById('views').value) || 0;
-        var costPerView = 1.00;
-        var subtotal = views * costPerView;
-        var gst = subtotal * 0.18;
-        var total = subtotal + gst;
+    // --- 2. CALCULATE COST ---
+    function calculateCost() {
+        var views = parseInt(document.getElementById('views').value) || 0;
+        var costPerView = 1.00;
+        var subtotal = views * costPerView;
+        var gst = subtotal * 0.18;
+        var total = subtotal + gst;
 
-        document.getElementById('subtotalDisplay').innerText = "₹ " + subtotal.toFixed(2);
-        document.getElementById('gstDisplay').innerText = "₹ " + gst.toFixed(2);
-        document.getElementById('totalDisplay').innerText = "₹ " + total.toFixed(2);
-    }
+        document.getElementById('subtotalDisplay').innerText = "₹ " + subtotal.toFixed(2);
+        document.getElementById('gstDisplay').innerText = "₹ " + gst.toFixed(2);
+        document.getElementById('totalDisplay').innerText = "₹ " + total.toFixed(2);
+    }
 
-    // --- 3. PUBLISH AD (Fixed with Compression) ---
-    function publishAd() {
-        try {
-            // A. Get Input Values
-            const name = document.getElementById('campName').value;
-            const category = document.getElementById('campCat').value;
-            const desc = document.getElementById('adDesc').value;
-            const views = document.getElementById('views').value;
-            const totalCost = document.getElementById('totalDisplay').innerText;
-            const fileInput = document.getElementById("adImage");
+    // --- 3. PUBLISH AD (Fixed with Compression) ---
+    function publishAd() {
+        try {
+            // A. Get Input Values
+            const name = document.getElementById('campName').value;
+            const category = document.getElementById('campCat').value;
+            const desc = document.getElementById('adDesc').value;
+            const views = document.getElementById('views').value;
+            const totalCost = document.getElementById('totalDisplay').innerText;
+            const fileInput = document.getElementById("adImage");
 
-            // B. Validations
-            if(!name) { alert("Please enter Campaign Name"); return; }
-            if(!desc) { alert("Please enter Ad Description"); return; }
-            if(category === "Select Category") { alert("Please select a valid Category"); return; }
-            if(fileInput.files.length === 0) { alert("Please select an ad image!"); return; }
+            // B. Validations
+            if(!name) { alert("Please enter Campaign Name"); return; }
+            if(!desc) { alert("Please enter Ad Description"); return; }
+            if(category === "Select Category") { alert("Please select a valid Category"); return; }
+            if(fileInput.files.length === 0) { alert("Please select an ad image!"); return; }
 
-            // --- C. COMPRESS IMAGE LOGIC START ---
-            const MAX_WIDTH = 800; // Shrink huge images to 800px width
-            const file = fileInput.files[0];
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
+            // --- C. COMPRESS IMAGE LOGIC START ---
+            const MAX_WIDTH = 800; // Shrink huge images to 800px width
+            const file = fileInput.files[0];
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
 
-            img.onload = function() {
-                // 1. Create a canvas to resize
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
+            img.onload = function() {
+                // 1. Create a canvas to resize
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-                // 2. Calculate new height to keep aspect ratio
-                const scaleFactor = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleFactor;
+                // 2. Calculate new height to keep aspect ratio
+                const scaleFactor = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleFactor;
 
-                // 3. Draw image on canvas (Resizing happens here)
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // 3. Draw image on canvas (Resizing happens here)
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                // 4. Convert to JPEG at 70% quality (Massive size reduction)
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                // 4. Convert to JPEG at 70% quality (Massive size reduction)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
-                // 5. SAVE THE COMPRESSED DATA
-                saveDataToStorage(name, category, desc, views, totalCost, compressedBase64);
-            };
-            // --- C. COMPRESS IMAGE LOGIC END ---
+                // 5. SAVE THE COMPRESSED DATA
+                saveDataToStorage(name, category, desc, views, totalCost, compressedBase64);
+            };
+            // --- C. COMPRESS IMAGE LOGIC END ---
 
-        } catch (e) {
-            alert("❌ System Error: " + e.message);
-        }
-    }
+        } catch (e) {
+            alert("❌ System Error: " + e.message);
+        }
+    }
 
-    // --- 4. SAVING FUNCTION ---
-    function saveDataToStorage(name, category, desc, views, totalCost, base64Image) {
-        try {
-            const newAd = {
-                id: "FRA" + Math.floor(Math.random() * 9999),
-                type: "Frame",
-                title: name,
-                desc: desc,
-                category: category,
-                image: base64Image, // Saving the SMALL image now
-                budget: totalCost,
-                target: views,
-                status: "Pending",
-                date: new Date().toLocaleDateString()
-            };
+    // --- 4. SAVING FUNCTION ---
+    function saveDataToStorage(name, category, desc, views, totalCost, base64Image) {
+        try {
+            const newAd = {
+                id: "FRA" + Math.floor(Math.random() * 9999),
+                type: "Frame",
+                title: name,
+                desc: desc,
+                category: category,
+                image: base64Image, // Saving the SMALL image now
+                budget: totalCost,
+                target: views,
+                status: "Pending",
+                date: new Date().toLocaleDateString()
+            };
 
-            // OPTIONAL: Clear old data if you still get errors (Safety measure)
-            // localStorage.clear(); 
+            // OPTIONAL: Clear old data if you still get errors (Safety measure)
+            // localStorage.clear(); 
 
-            // Save to User Page Queue
-            let allAds = JSON.parse(localStorage.getItem("all_frame_ads") || "[]");
-            allAds.push(newAd);
-            localStorage.setItem("all_frame_ads", JSON.stringify(allAds));
+            // Save to User Page Queue
+            let allAds = JSON.parse(localStorage.getItem("all_frame_ads") || "[]");
+            allAds.push(newAd);
+            localStorage.setItem("all_frame_ads", JSON.stringify(allAds));
 
-            // Save to Vendor Dashboard
-            let vendorAds = JSON.parse(localStorage.getItem("vendorCampaigns") || "[]");
-            vendorAds.push(newAd);
-            localStorage.setItem("vendorCampaigns", JSON.stringify(vendorAds));
+            // Save to Vendor Dashboard
+            let vendorAds = JSON.parse(localStorage.getItem("vendorCampaigns") || "[]");
+            vendorAds.push(newAd);
+            localStorage.setItem("vendorCampaigns", JSON.stringify(vendorAds));
 
-            alert("✅ Ad Submitted Successfully!");
-            window.location.href = "vendor-dashboard.html";
+            alert("✅ Ad Submitted Successfully!");
+            window.location.href = "vendor-dashboard.html";
 
-        } catch (err) {
-            if (err.name === 'QuotaExceededError') {
-                alert("❌ Storage Full: Even the compressed image is too big, or you have too many ads saved. Try deleting old ads.");
-            } else {
-                alert("❌ Error saving ad: " + err.message);
-            }
-        }
-    }
+        } catch (err) {
+            if (err.name === 'QuotaExceededError') {
+                alert("❌ Storage Full: Even the compressed image is too big, or you have too many ads saved. Try deleting old ads.");
+            } else {
+                alert("❌ Error saving ad: " + err.message);
+            }
+        }
+    }
 </script>
 </body>
 </html>
+
+Now pls confirm 
