@@ -173,22 +173,12 @@
         const file = fileInput.files[0];
         
         if (file) {
-            // CHECK SIZE: Limit to 2MB (2,000,000 bytes)
-            if (file.size > 2000000) {
-                alert("⚠️ File is too big! Please choose an image under 2MB.");
-                fileInput.value = ""; // Clear input
-                return;
-            }
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Show Preview
                 document.getElementById("imgPreview").src = e.target.result;
                 document.getElementById("imgPreview").style.display = "block";
-                
-                // Hide Text and Icon inside Upload Box
                 document.querySelector(".upload-box .upload-icon").style.display = "none";
-                document.querySelector(".upload-box span[style]").style.display = "none"; // Hides the text span
+                document.querySelector(".upload-box span[style]").style.display = "none"; 
             }
             reader.readAsDataURL(file);
         }
@@ -198,7 +188,6 @@
     function calculateCost() {
         var views = parseInt(document.getElementById('views').value) || 0;
         var costPerView = 1.00;
-
         var subtotal = views * costPerView;
         var gst = subtotal * 0.18;
         var total = subtotal + gst;
@@ -208,7 +197,7 @@
         document.getElementById('totalDisplay').innerText = "₹ " + total.toFixed(2);
     }
 
-    // --- 3. PUBLISH AD (With Error Handling) ---
+    // --- 3. PUBLISH AD (Fixed with Compression) ---
     function publishAd() {
         try {
             // A. Get Input Values
@@ -225,54 +214,76 @@
             if(category === "Select Category") { alert("Please select a valid Category"); return; }
             if(fileInput.files.length === 0) { alert("Please select an ad image!"); return; }
 
-            // C. Process Image & Save
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const base64Image = e.target.result;
+            // --- C. COMPRESS IMAGE LOGIC START ---
+            const MAX_WIDTH = 800; // Shrink huge images to 800px width
+            const file = fileInput.files[0];
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
 
-                    const newAd = {
-                        id: "FRA" + Math.floor(Math.random() * 9999),
-                        type: "Frame",
-                        title: name,
-                        desc: desc,
-                        category: category,
-                        image: base64Image,
-                        budget: totalCost,
-                        target: views,
-                        status: "Pending",
-                        date: new Date().toLocaleDateString()
-                    };
+            img.onload = function() {
+                // 1. Create a canvas to resize
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-                    // D. Save to User Page Queue
-                    let allAds = JSON.parse(localStorage.getItem("all_frame_ads") || "[]");
-                    allAds.push(newAd);
-                    localStorage.setItem("all_frame_ads", JSON.stringify(allAds));
+                // 2. Calculate new height to keep aspect ratio
+                const scaleFactor = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleFactor;
 
-                    // E. Save to Vendor Dashboard
-                    let vendorAds = JSON.parse(localStorage.getItem("vendorCampaigns") || "[]");
-                    vendorAds.push(newAd);
-                    localStorage.setItem("vendorCampaigns", JSON.stringify(vendorAds));
+                // 3. Draw image on canvas (Resizing happens here)
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                    alert("✅ Ad Submitted Successfully!");
-                    window.location.href = "vendor_dashboard.html";
+                // 4. Convert to JPEG at 70% quality (Massive size reduction)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
-                } catch (err) {
-                    // CATCH STORAGE FULL ERROR
-                    if (err.name === 'QuotaExceededError') {
-                        alert("❌ Error: Image is too large to save! Please use a smaller image or screenshot.");
-                    } else {
-                        alert("❌ Error saving ad: " + err.message);
-                    }
-                    console.error(err);
-                }
+                // 5. SAVE THE COMPRESSED DATA
+                saveDataToStorage(name, category, desc, views, totalCost, compressedBase64);
             };
-            
-            reader.readAsDataURL(fileInput.files[0]);
+            // --- C. COMPRESS IMAGE LOGIC END ---
 
         } catch (e) {
             alert("❌ System Error: " + e.message);
+        }
+    }
+
+    // --- 4. SAVING FUNCTION ---
+    function saveDataToStorage(name, category, desc, views, totalCost, base64Image) {
+        try {
+            const newAd = {
+                id: "FRA" + Math.floor(Math.random() * 9999),
+                type: "Frame",
+                title: name,
+                desc: desc,
+                category: category,
+                image: base64Image, // Saving the SMALL image now
+                budget: totalCost,
+                target: views,
+                status: "Pending",
+                date: new Date().toLocaleDateString()
+            };
+
+            // OPTIONAL: Clear old data if you still get errors (Safety measure)
+            // localStorage.clear(); 
+
+            // Save to User Page Queue
+            let allAds = JSON.parse(localStorage.getItem("all_frame_ads") || "[]");
+            allAds.push(newAd);
+            localStorage.setItem("all_frame_ads", JSON.stringify(allAds));
+
+            // Save to Vendor Dashboard
+            let vendorAds = JSON.parse(localStorage.getItem("vendorCampaigns") || "[]");
+            vendorAds.push(newAd);
+            localStorage.setItem("vendorCampaigns", JSON.stringify(vendorAds));
+
+            alert("✅ Ad Submitted Successfully!");
+            window.location.href = "vendor-dashboard.html";
+
+        } catch (err) {
+            if (err.name === 'QuotaExceededError') {
+                alert("❌ Storage Full: Even the compressed image is too big, or you have too many ads saved. Try deleting old ads.");
+            } else {
+                alert("❌ Error saving ad: " + err.message);
+            }
         }
     }
 </script>
